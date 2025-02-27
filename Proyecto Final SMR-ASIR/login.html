@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-indigo-600 text-gray-900 flex justify-center items-center min-h-screen">
+    <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
+        <h2 class="text-4xl font-extrabold text-center mb-6 text-gray-800">Bienvenido de nuevo</h2>
+        <p class="text-center text-gray-600 mb-6">Ingresa tus credenciales para acceder a tu cuenta</p>
+        <form id="login-form" class="space-y-6">
+            <div>
+                <label for="login-usuario" class="block font-semibold text-gray-700">Usuario o Correo</label>
+                <input type="text" id="login-usuario" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" required>
+            </div>
+            
+            <div>
+                <label for="login-password" class="block font-semibold text-gray-700">Contraseña</label>
+                <input type="password" id="login-password" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" required>
+            </div>
+            
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-3 rounded-lg w-full transition transform hover:scale-105 shadow-lg">Iniciar Sesión</button>
+        </form>
+        
+        <div class="text-center mt-4">
+            <a href="#" class="text-indigo-600 hover:underline">¿Olvidaste tu contraseña?</a>
+        </div>
+        
+        <p class="text-sm text-center mt-4 text-gray-700">¿No tienes cuenta? <a href="registro.html" class="text-indigo-600 hover:underline">Regístrate</a></p>
+        <p id="error-message" class="text-red-500 text-sm text-center mt-3 hidden"></p>
+    </div>
+    
+    <script>
+        document.getElementById("login-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const usuarioInput = document.getElementById("login-usuario");
+            const passwordInput = document.getElementById("login-password");
+            const errorMessage = document.getElementById("error-message");
+            
+            const usuario = usuarioInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            errorMessage.classList.add("hidden");
+            
+            if (!usuario || !password) {
+                errorMessage.textContent = "Todos los campos son obligatorios.";
+                errorMessage.classList.remove("hidden");
+                return;
+            }
+            
+            let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+            const usuarioEncontrado = usuarios.find(u => (u.usuario === usuario || u.correo === usuario) && u.password === password);
+            
+            if (usuarioEncontrado) {
+                localStorage.setItem("usuarioActivo", JSON.stringify({ usuario: usuarioEncontrado.usuario, correo: usuarioEncontrado.correo }));
+                alert("Inicio de sesión exitoso");
+                window.location.href = "index.html";
+            } else {
+                errorMessage.textContent = "Usuario o contraseña incorrectos.";
+                errorMessage.classList.remove("hidden");
+            }
+        });
+    </script>
+</body>
+</html>

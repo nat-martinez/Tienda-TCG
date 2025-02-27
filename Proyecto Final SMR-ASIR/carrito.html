@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .hidden { display: none; }
+        .fade-out { opacity: 0; transition: opacity 0.5s ease-out; }
+        .notificacion {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #38bdf8;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeInOut 3s ease-in-out;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center text-2xl font-bold relative">
+        Carrito de Compras
+        <span id="cart-count" class="absolute top-4 right-6 bg-red-500 text-white text-xs px-2 py-1 rounded-full hidden"></span>
+    </header>
+    
+    <main class="p-8 max-w-4xl mx-auto">
+        <h2 class="text-3xl font-semibold text-gray-800 text-center mb-6">Tu Carrito</h2>
+
+        <div id="carrito-items" class="space-y-4" aria-live="polite">
+            <p class="text-gray-700 text-center">Tu carrito está vacío.</p>
+        </div>
+
+        <div id="total-container" class="mt-6 text-right text-xl font-bold text-gray-900 hidden">
+            Total: <span id="total-precio" class="text-blue-600">$0</span>
+        </div>
+
+        <div class="mt-6 text-center">
+            <input type="text" id="cupon" class="border p-2 rounded w-64" placeholder="Ingresa un código de descuento">
+            <button id="aplicar-cupon" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                Aplicar Cupón
+            </button>
+        </div>
+
+        <div class="mt-8 flex justify-between items-center">
+            <button onclick="window.location.href='Poryecto SMR-ASIR.html'" class="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700 transition">
+                Seguir Comprando
+            </button>
+            <button id="finalizar-compra" class="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition hidden">
+                Ir a Métodos de Pago
+            </button>
+        </div>
+    </main>
+
+    <div id="notificacion" class="notificacion hidden"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const carritoItems = document.getElementById("carrito-items");
+            const finalizarCompraBtn = document.getElementById("finalizar-compra");
+            const totalContainer = document.getElementById("total-container");
+            const totalPrecio = document.getElementById("total-precio");
+            const cartCount = document.getElementById("cart-count");
+            const notificacion = document.getElementById("notificacion");
+            const cuponInput = document.getElementById("cupon");
+            const aplicarCuponBtn = document.getElementById("aplicar-cupon");
+
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            let descuento = 0;
+
+            const cuponesValidos = {
+                "DESCUENTO10": 10,
+                "BLACKFRIDAY": 20,
+                "FREESHIP": 5
+            };
+
+            const formatoPrecio = (precio) => {
+                return new Intl.NumberFormat("es-ES", { style: "currency", currency: "USD" }).format(precio);
+            };
+
+            const mostrarNotificacion = (mensaje) => {
+                notificacion.textContent = mensaje;
+                notificacion.classList.remove("hidden");
+                setTimeout(() => {
+                    notificacion.classList.add("hidden");
+                }, 3000);
+            };
+
+            const actualizarCarrito = () => {
+                carritoItems.innerHTML = "";
+                if (carrito.length === 0) {
+                    carritoItems.innerHTML = '<p class="text-gray-700 text-center">Tu carrito está vacío.</p>';
+                    finalizarCompraBtn.classList.add("hidden");
+                    totalContainer.classList.add("hidden");
+                    cartCount.classList.add("hidden");
+                    return;
+                }
+
+                let total = 0;
+
+                carrito.forEach((item, index) => {
+                    const itemContainer = document.createElement("div");
+                    itemContainer.classList.add("bg-white", "p-4", "shadow", "rounded", "flex", "justify-between", "items-center");
+
+                    const itemTexto = document.createElement("span");
+                    itemTexto.classList.add("text-lg", "font-semibold");
+                    itemTexto.textContent = `${item.nombre} - ${formatoPrecio(item.precio)}`;
+
+                    const botonEliminar = document.createElement("button");
+                    botonEliminar.classList.add("bg-red-500", "text-white", "px-3", "py-1", "rounded", "hover:bg-red-700", "transition");
+                    botonEliminar.textContent = "Eliminar";
+                    botonEliminar.onclick = () => eliminarItem(index, itemContainer);
+
+                    itemContainer.appendChild(itemTexto);
+                    itemContainer.appendChild(botonEliminar);
+                    carritoItems.appendChild(itemContainer);
+
+                    total += parseFloat(item.precio);
+                });
+
+                if (descuento > 0) {
+                    total -= (total * descuento) / 100;
+                }
+
+                totalPrecio.textContent = formatoPrecio(total);
+                finalizarCompraBtn.classList.remove("hidden");
+                totalContainer.classList.remove("hidden");
+                cartCount.textContent = carrito.length;
+                cartCount.classList.remove("hidden");
+            };
+
+            const eliminarItem = (index, itemContainer) => {
+                if (confirm("¿Seguro que quieres eliminar este producto?")) {
+                    itemContainer.classList.add("fade-out");
+                    setTimeout(() => {
+                        carrito.splice(index, 1);
+                        localStorage.setItem("carrito", JSON.stringify(carrito));
+                        actualizarCarrito();
+                        mostrarNotificacion("Producto eliminado del carrito.");
+                    }, 500);
+                }
+            };
+
+            aplicarCuponBtn.addEventListener("click", () => {
+                const codigo = cuponInput.value.trim().toUpperCase();
+                if (cuponesValidos[codigo]) {
+                    descuento = cuponesValidos[codigo];
+                    mostrarNotificacion(`Cupón aplicado: ${descuento}% de descuento.`);
+                    actualizarCarrito();
+                } else {
+                    mostrarNotificacion("Cupón inválido.");
+                }
+            });
+
+            finalizarCompraBtn.addEventListener("click", () => {
+                localStorage.setItem("carritoTotal", JSON.stringify({
+                    productos: carrito,
+                    total: totalPrecio.textContent
+                }));
+                window.location.href = "metodosdepago.html";
+            });
+
+            actualizarCarrito();
+        });
+    </script>
+</body>
+</html>

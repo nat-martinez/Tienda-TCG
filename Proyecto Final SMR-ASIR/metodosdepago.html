@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Métodos de Pago</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center text-2xl font-bold shadow-lg">
+        Métodos de Pago
+    </header>
+    
+    <main class="p-8 max-w-4xl mx-auto">
+        <h1 class="text-3xl font-semibold text-blue-700 text-center mb-6">Selecciona un Método de Pago</h1>
+        
+        <form id="pago-form" class="bg-white p-6 shadow-lg rounded-lg">
+            <label class="block text-lg font-semibold text-gray-800">Nombre en la Tarjeta</label>
+            <input type="text" id="nombre-tarjeta" class="w-full p-3 border rounded-lg mt-2 mb-4" placeholder="Nombre completo" required>
+            
+            <label class="block text-lg font-semibold text-gray-800">Número de Tarjeta</label>
+            <input type="text" id="numero-tarjeta" class="w-full p-3 border rounded-lg mt-2 mb-4" placeholder="XXXX-XXXX-XXXX-XXXX" required>
+            
+            <label class="block text-lg font-semibold text-gray-800">Fecha de Expiración</label>
+            <input type="text" id="expiracion" class="w-full p-3 border rounded-lg mt-2 mb-4" placeholder="MM/AA" required>
+            
+            <label class="block text-lg font-semibold text-gray-800">Código CVV</label>
+            <input type="text" id="cvv" class="w-full p-3 border rounded-lg mt-2 mb-4" placeholder="123" required>
+            
+            <label class="block text-lg font-semibold text-gray-800">Método de Pago</label>
+            <select id="metodo-pago" class="w-full p-3 border rounded-lg mt-2 mb-4">
+                <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+                <option value="paypal">PayPal</option>
+                <option value="transferencia">Transferencia Bancaria</option>
+            </select>
+            
+            <button type="submit" class="w-full bg-green-600 text-white p-3 rounded-lg shadow-lg hover:bg-green-700 transition">Pagar Ahora</button>
+        </form>
+        
+        <p id="mensaje-exito" class="text-green-600 text-center mt-4 hidden">Pago procesado con éxito. ¡Gracias por tu compra!</p>
+    </main>
+    
+    <footer class="bg-gray-900 text-white text-center p-6 mt-10 text-lg">
+        &copy; 2025 Tienda de Cartas. Todos los derechos reservados.
+    </footer>
+    
+    <script>
+        document.getElementById("pago-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const nombreTarjeta = document.getElementById("nombre-tarjeta").value.trim();
+            const numeroTarjeta = document.getElementById("numero-tarjeta").value.trim();
+            const expiracion = document.getElementById("expiracion").value.trim();
+            const cvv = document.getElementById("cvv").value.trim();
+            
+            if (nombreTarjeta === "" || numeroTarjeta === "" || expiracion === "" || cvv === "") {
+                alert("Todos los campos son obligatorios.");
+                return;
+            }
+            
+            if (!/^\d{4}-\d{4}-\d{4}-\d{4}$/.test(numeroTarjeta)) {
+                alert("Número de tarjeta inválido.");
+                return;
+            }
+            
+            if (!/^\d{2}\/\d{2}$/.test(expiracion)) {
+                alert("Fecha de expiración inválida.");
+                return;
+            }
+            
+            if (!/^\d{3}$/.test(cvv)) {
+                alert("CVV inválido.");
+                return;
+            }
+            
+            document.getElementById("pago-form").reset();
+            document.getElementById("mensaje-exito").classList.remove("hidden");
+            
+            setTimeout(() => {
+                document.getElementById("mensaje-exito").classList.add("hidden");
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
