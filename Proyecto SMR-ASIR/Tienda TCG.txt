@@ -1,0 +1,10 @@
+Tienda TCG
+
+Cupones: 
+
+	DESCUENTO10: 10%
+	
+	BLACKFRIDAY: 20%
+
+	FREESHIP: 5%
+

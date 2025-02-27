@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center text-2xl font-bold shadow-lg">
+        Contacto
+    </header>
+    
+    <main class="p-8 max-w-4xl mx-auto">
+        <h1 class="text-3xl font-semibold text-blue-700 text-center mb-6">Contáctanos</h1>
+        <p class="text-lg text-gray-700 text-center mb-8">Si tienes alguna consulta, completa el siguiente formulario y nos pondremos en contacto contigo lo antes posible.</p>
+        
+        <form id="contacto-form" class="bg-white p-6 shadow-lg rounded-lg">
+            <label class="block text-lg font-semibold text-gray-800">Nombre</label>
+            <input type="text" id="nombre" class="w-full p-3 border rounded-lg mt-2 mb-4" placeholder="Tu nombre" required>
+            
+            <label class="block text-lg font-semibold text-gray-800">Correo Electrónico</label>
+            <input type="email" id="email" class="w-full p-3 border rounded-lg mt-2 mb-4" placeholder="tucorreo@example.com" required>
+            
+            <label class="block text-lg font-semibold text-gray-800">Asunto</label>
+            <input type="text" id="asunto" class="w-full p-3 border rounded-lg mt-2 mb-4" placeholder="Asunto del mensaje" required>
+            
+            <label class="block text-lg font-semibold text-gray-800">Mensaje</label>
+            <textarea id="mensaje" class="w-full p-3 border rounded-lg mt-2 mb-4 h-32" placeholder="Escribe tu mensaje aquí..." required></textarea>
+            
+            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg shadow-lg hover:bg-blue-700 transition">Enviar Mensaje</button>
+        </form>
+        
+        <p id="mensaje-exito" class="text-green-600 text-center mt-4 hidden">Mensaje enviado con éxito. Nos pondremos en contacto contigo pronto.</p>
+    </main>
+    
+    <footer class="bg-gray-900 text-white text-center p-6 mt-10 text-lg">
+        &copy; 2025 Tienda de Cartas. Todos los derechos reservados.
+    </footer>
+    
+    <script>
+        document.getElementById("contacto-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const nombre = document.getElementById("nombre").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const asunto = document.getElementById("asunto").value.trim();
+            const mensaje = document.getElementById("mensaje").value.trim();
+            
+            if (nombre === "" || email === "" || asunto === "" || mensaje === "") {
+                alert("Todos los campos son obligatorios.");
+                return;
+            }
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert("Por favor, introduce un correo electrónico válido.");
+                return;
+            }
+            
+            document.getElementById("contacto-form").reset();
+            document.getElementById("mensaje-exito").classList.remove("hidden");
+            
+            setTimeout(() => {
+                document.getElementById("mensaje-exito").classList.add("hidden");
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

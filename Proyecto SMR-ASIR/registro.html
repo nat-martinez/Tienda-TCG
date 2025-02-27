@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-indigo-600 text-gray-900 flex justify-center items-center min-h-screen">
+    <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
+        <h2 class="text-3xl font-extrabold text-center mb-6 text-gray-800">Crea tu cuenta</h2>
+        <p class="text-center text-gray-600 mb-6">Llena los siguientes campos para registrarte</p>
+        <form id="registro-form" class="space-y-6">
+            <div>
+                <label for="registro-usuario" class="block font-semibold text-gray-700">Usuario</label>
+                <input type="text" id="registro-usuario" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" required>
+            </div>
+            
+            <div>
+                <label for="registro-correo" class="block font-semibold text-gray-700">Correo Electrónico</label>
+                <input type="email" id="registro-correo" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" required>
+            </div>
+            
+            <div>
+                <label for="registro-password" class="block font-semibold text-gray-700">Contraseña</label>
+                <input type="password" id="registro-password" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" required>
+            </div>
+            
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-3 rounded-lg w-full transition transform hover:scale-105 shadow-lg">Registrarse</button>
+        </form>
+        
+        <div class="text-center mt-4">
+            <a href="#" class="text-indigo-600 hover:underline">¿Olvidaste tu contraseña?</a>
+        </div>
+        
+        <p class="text-sm text-center mt-4 text-gray-700">¿Ya tienes cuenta? <a href="login.html" class="text-indigo-600 hover:underline">Inicia sesión</a></p>
+        <p id="registro-error" class="text-red-500 text-sm text-center mt-3 hidden"></p>
+    </div>
+    
+    <script>
+        document.getElementById("registro-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const usuarioInput = document.getElementById("registro-usuario");
+            const correoInput = document.getElementById("registro-correo");
+            const passwordInput = document.getElementById("registro-password");
+            const errorMessage = document.getElementById("registro-error");
+            
+            const usuario = usuarioInput.value.trim();
+            const correo = correoInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            errorMessage.classList.add("hidden");
+            
+            if (!usuario || !correo || !password) {
+                errorMessage.textContent = "Todos los campos son obligatorios.";
+                errorMessage.classList.remove("hidden");
+                return;
+            }
+            
+            let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+            if (usuarios.some(u => u.usuario === usuario || u.correo === correo)) {
+                errorMessage.textContent = "El usuario o correo ya están registrados.";
+                errorMessage.classList.remove("hidden");
+                return;
+            }
+            
+            usuarios.push({ usuario, correo, password });
+            localStorage.setItem("usuarios", JSON.stringify(usuarios));
+            
+            window.location.href = "index.html";
+        });
+    </script>
+</body>
+</html>

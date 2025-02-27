@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda TCG</title>
+    <link rel="icon" href="" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 text-center text-2xl font-bold shadow-lg flex justify-between items-center px-8">
+        <span>Tienda de Cartas Coleccionables</span>
+        <div class="flex gap-4">
+            <a id="login-btn" href="login.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow hover:bg-gray-200">Iniciar sesión</a>
+            <a id="registro-btn" href="registro.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow hover:bg-gray-200">Registrarse</a>
+            <button id="logout-btn" class="hidden bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-800">Cerrar sesión</button>
+            <a id="carrito-btn" href="carrito.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow hover:bg-gray-200">🛒 Carrito (<span id="carrito-contador">0</span>)</a>
+        </div>
+    </header>
+    
+    <main class="p-8 max-w-6xl mx-auto">
+        <h1 class="text-4xl font-extrabold text-blue-700 text-center">Bienvenido a nuestra tienda</h1>
+        
+        <section class="mt-10">
+            <h2 class="text-3xl font-semibold text-gray-800 text-center">Catálogo de Cartas</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-6" id="catalogo"></div>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-900 text-white text-center p-6 mt-10 text-lg">
+        &copy; 2025 Tienda de Cartas. Todos los derechos reservados.
+        <p><a href="contacto.html" class="underline">Contacto</a></p>
+    </footer>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loginBtn = document.getElementById("login-btn");
+            const registroBtn = document.getElementById("registro-btn");
+            const logoutBtn = document.getElementById("logout-btn");
+            const carritoBtn = document.getElementById("carrito-btn");
+            const contadorCarrito = document.getElementById("carrito-contador");
+            const catalogo = document.getElementById("catalogo");
+            
+            let usuarioLogueado = localStorage.getItem("usuario");
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            contadorCarrito.textContent = carrito.length;
+            
+            if (usuarioLogueado) {
+                loginBtn.classList.add("hidden");
+                registroBtn.classList.add("hidden");
+                logoutBtn.classList.remove("hidden");
+            }
+            
+            logoutBtn.addEventListener("click", () => {
+                localStorage.removeItem("usuario");
+                alert("Has cerrado sesión.");
+                window.location.reload();
+            });
+            
+            const cartas = [
+                { nombre: "One Piece", precio: 20, img: "http://13.53.190.97/img/onepiece.jpg" },
+                { nombre: "Pokémon", precio: 15, img: "http://13.53.190.97/img/pokemon.jpg" },
+                { nombre: "Magic: The Gathering", precio: 5, img: "http://13.53.190.97/img/magic.jpg" }
+            ];
+            
+            cartas.forEach(carta => {
+                const cartaHTML = `
+                    <div class="carta bg-white p-6 shadow-lg rounded-lg transition transform hover:scale-105" data-nombre="${carta.nombre}" data-precio="${carta.precio}">
+                        <img src="${carta.img}" alt="${carta.nombre}" class="w-full h-48 object-cover rounded">
+                        <h3 class="text-xl font-bold mt-4 text-gray-900">${carta.nombre}</h3>
+                        <p class="text-gray-700 mt-2">Precio: <span class="font-semibold text-blue-600">${carta.precio}€</span></p>
+                        <button class="mt-4 px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition w-full agregar-carrito">Agregar al carrito</button>
+                    </div>
+                `;
+                catalogo.innerHTML += cartaHTML;
+            });
+
+            document.addEventListener("click", (e) => {
+                if (e.target.classList.contains("agregar-carrito")) {
+                    const carta = e.target.closest(".carta");
+                    const nombre = carta.dataset.nombre;
+                    const precio = parseFloat(carta.dataset.precio);
+
+                    carrito.push({ nombre, precio });
+                    localStorage.setItem("carrito", JSON.stringify(carrito));
+                    contadorCarrito.textContent = carrito.length;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

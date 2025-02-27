@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Métodos de Pago</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <header class="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6 text-center text-2xl font-bold">
+        Métodos de Pago
+    </header>
+
+    <main class="p-8 max-w-3xl mx-auto">
+        <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Selecciona tu Método de Pago</h2>
+
+        <div id="resumen-carrito" class="space-y-4">
+            <p class="text-gray-700 text-center">Cargando carrito...</p>
+        </div>
+
+        <h3 class="mt-6 text-lg font-semibold">Método de pago:</h3>
+        <select id="metodo-pago" class="w-full p-2 mt-2 border rounded">
+            <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+            <option value="paypal">PayPal</option>
+            <option value="transferencia">Transferencia Bancaria</option>
+        </select>
+
+        <div id="pago-form" class="mt-4">
+            <input type="text" id="numero-tarjeta" class="w-full p-2 border rounded hidden" placeholder="Número de Tarjeta">
+        </div>
+
+        <button id="pagar" class="mt-6 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition">
+            Confirmar Pago
+        </button>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const resumenCarrito = document.getElementById("resumen-carrito");
+            const metodoPago = document.getElementById("metodo-pago");
+            const pagoForm = document.getElementById("pago-form");
+            const numeroTarjeta = document.getElementById("numero-tarjeta");
+            const pagarBtn = document.getElementById("pagar");
+
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+            const actualizarResumen = () => {
+                if (carrito.length === 0) {
+                    resumenCarrito.innerHTML = "<p class='text-gray-700 text-center'>Tu carrito está vacío.</p>";
+                    return;
+                }
+
+                resumenCarrito.innerHTML = carrito.map(item => `
+                    <div class="bg-white p-4 shadow rounded flex justify-between">
+                        <span>${item.nombre} - $${item.precio}</span>
+                    </div>
+                `).join("");
+            };
+
+            metodoPago.addEventListener("change", () => {
+                if (metodoPago.value === "tarjeta") {
+                    numeroTarjeta.classList.remove("hidden");
+                } else {
+                    numeroTarjeta.classList.add("hidden");
+                }
+            });
+
+            pagarBtn.addEventListener("click", () => {
+                alert("¡Pago realizado con éxito! Gracias por tu compra.");
+                localStorage.removeItem("carrito");
+                window.location.href = "index.html";
+            });
+
+            actualizarResumen();
+        });
+    </script>
+</body>
+</html>
